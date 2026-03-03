@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [stats, setStats] = useState(null);
+  const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchStats();
-  }, []);
+    if (user?.role === 'trainee') {
+      fetchCourses();
+    }
+  }, [user]);
 
   const fetchStats = async () => {
     try {
@@ -20,6 +25,16 @@ const Dashboard = () => {
       setStats({});
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCourses = async () => {
+    try {
+      const response = await api.get('/courses/');
+      setCourses(response.data);
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+      setCourses([]);
     }
   };
 
@@ -209,7 +224,7 @@ const Dashboard = () => {
                 </svg>
               </div>
               <div className="stat-label">Mes Cours</div>
-              <div className="stat-value">{stats?.my_progress || 0}</div>
+              <div className="stat-value">{courses.length || 0}</div>
             </div>
             <div className="stat-card">
               <div className="stat-icon green">
@@ -262,6 +277,7 @@ const Dashboard = () => {
               <div className="stat-icon purple">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
                 </svg>
               </div>
               <div className="stat-label">Statistique 1</div>

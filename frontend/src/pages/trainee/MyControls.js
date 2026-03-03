@@ -54,8 +54,6 @@ const MyControls = () => {
     }
   };
 
-  const getPartLabel = (part) => ['Partie 1', 'Partie 2', 'Partie 3', 'Partie 4'][part - 1];
-
   return (
     <div>
       <div className="page-header">
@@ -65,47 +63,49 @@ const MyControls = () => {
         <h1 className="page-title">Mes Contrôles</h1>
       </div>
       <div className="page-content">
-        {loading ? <p>Chargement...</p> : controls.length === 0 ? (
+        {loading ? (
+          <p>Chargement...</p>
+        ) : controls.length === 0 ? (
           <div className="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            </svg>
             <h3>Aucun contrôle disponible</h3>
             <p>Revenez plus tard pour voir les contrôles</p>
           </div>
         ) : (
-          <div className="part-grid">
-            {[1, 2, 3, 4].map((part) => {
-              const partControls = controls.filter(c => c.part_number === part);
-              return (
-                <div key={part} className="part-card">
-                  <div className="part-header">Contrôles - {getPartLabel(part)}</div>
-                  <div className="part-body">
-                    {partControls.length === 0 ? (
-                      <p style={{ color: '#6B7280', textAlign: 'center', padding: '20px' }}>Aucun contrôle disponible</p>
-                    ) : (
-                      partControls.map((control) => (
-                        <div key={control.id} className="part-item">
-                          <div className="part-item-icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
-                              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                            </svg>
-                          </div>
-                          <div className="part-item-title">{control.title}</div>
-                          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                            {control.file && (
-                              <a href={control.file} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-info">
-                                Télécharger le contrôle
-                              </a>
-                            )}
-                            <button className="btn btn-sm btn-primary" onClick={() => { setSelectedControl(control); setShowModal(true); }}>
-                              Soumettre
-                            </button>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+          <div className="card">
+            <div className="card-body" style={{ padding: 0 }}>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Matière</th>
+                    <th>Titre</th>
+                    <th>Date limite</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {controls.map((control) => (
+                    <tr key={control.id}>
+                      <td>{control.subject_name}</td>
+                      <td><strong>{control.title}</strong></td>
+                      <td>{control.due_date ? new Date(control.due_date).toLocaleDateString('fr-FR') : '-'}</td>
+                      <td style={{ display: 'flex', gap: '8px' }}>
+                        {control.file && (
+                          <a href={control.file} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-secondary">
+                            Télécharger
+                          </a>
+                        )}
+                        <button className="btn btn-sm btn-primary" onClick={() => { setSelectedControl(control); setShowModal(true); }}>
+                          Soumettre
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>
@@ -120,7 +120,6 @@ const MyControls = () => {
             <form onSubmit={handleSubmit}>
               <div className="modal-body">
                 <p style={{ marginBottom: '16px' }}><strong>Matière:</strong> {selectedControl.subject_name}</p>
-                <p style={{ marginBottom: '16px' }}><strong>Partie:</strong> {getPartLabel(selectedControl.part_number)}</p>
                 {selectedControl.description && (
                   <p style={{ marginBottom: '16px' }}><strong>Description:</strong> {selectedControl.description}</p>
                 )}
@@ -132,7 +131,14 @@ const MyControls = () => {
                 )}
                 <div className="form-group">
                   <label className="form-label">Votre réponse textuelle</label>
-                  <textarea className="form-textarea" style={{ minHeight: '150px' }} value={answerText} onChange={(e) => setAnswerText(e.target.value)} placeholder="Entrez votre réponse ici..." required />
+                  <textarea 
+                    className="form-textarea" 
+                    style={{ minHeight: '150px' }} 
+                    value={answerText} 
+                    onChange={(e) => setAnswerText(e.target.value)} 
+                    placeholder="Entrez votre réponse ici..." 
+                    required 
+                  />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Ou/uploader un fichier (PDF, Image, Doc)</label>

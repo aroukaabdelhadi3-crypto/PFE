@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const SupervisorDashboard = ({ children }) => {
+const SupervisorDashboard = ({ children, title = 'Dashboard' }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
@@ -17,11 +18,31 @@ const SupervisorDashboard = ({ children }) => {
     return labels[role] || role;
   };
 
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
     <div className="app-container">
-      <aside className="sidebar">
+      {/* Sidebar Toggle Button */}
+      <button 
+        className={`sidebar-toggle ${sidebarCollapsed ? 'collapsed' : ''}`} 
+        onClick={toggleSidebar}
+        title={sidebarCollapsed ? 'Développer' : 'Réduire'}
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+          <path d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+
+      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''}`}>
         <div className="sidebar-header">
-          <div className="sidebar-logo">PFE <span>Formation</span></div>
+          <div className="sidebar-logo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="28" height="28">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            <span>PFE</span>
+          </div>
         </div>
         
         <nav className="sidebar-nav">
@@ -32,29 +53,47 @@ const SupervisorDashboard = ({ children }) => {
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d={item.icon} />
                 </svg>
-                {item.label}
+                <span>{item.label}</span>
               </Link>
             ))}
           </div>
         </nav>
         
         <div className="sidebar-footer">
-          <div className="user-info">
-            <div className="user-avatar">{user?.first_name?.[0]}{user?.last_name?.[0]}</div>
-            <div className="user-details">
-              <div className="user-name">{user?.first_name} {user?.last_name}</div>
-              <div className="user-role">{getRoleLabel(user?.role)}</div>
+          <div className="sidebar-profile">
+            <div className="profile-img">
+              {user?.first_name?.[0]}{user?.last_name?.[0]}
             </div>
-            <button onClick={logout} style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer', padding: '8px' }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
-              </svg>
-            </button>
+            <div className="profile-info">
+              <h3>{user?.first_name} {user?.last_name}</h3>
+              <p>{getRoleLabel(user?.role)}</p>
+            </div>
           </div>
+          <button onClick={logout} className="logout-btn" style={{ marginTop: '12px' }}>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="20" height="20">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" />
+            </svg>
+            <span>Déconnexion</span>
+          </button>
         </div>
       </aside>
-      <main className="main-content">
-        {children}
+      
+      <main className={`main-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+        <div className="content-header">
+          <h1 className="page-title">📌 {title}</h1>
+          <div className="header-actions">
+            <div className="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="18" height="18">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.35-4.35" />
+              </svg>
+              <input type="text" placeholder="Rechercher..." className="search-input" />
+            </div>
+          </div>
+        </div>
+        <div className="content-body">
+          {children}
+        </div>
       </main>
     </div>
   );

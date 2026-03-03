@@ -48,80 +48,6 @@ const PrivateRoute = ({ children, allowedRoles }) => {
   return children;
 };
 
-// Admin Layout with nested routes
-const AdminLayout = () => {
-  return (
-    <AdminDashboard>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-    </AdminDashboard>
-  );
-};
-
-// Instructor Layout with nested routes
-const InstructorLayout = () => {
-  return (
-    <InstructorDashboard>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-    </InstructorDashboard>
-  );
-};
-
-// Trainee Layout with nested routes
-const TraineeLayout = () => {
-  return (
-    <TraineeDashboard>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-    </TraineeDashboard>
-  );
-};
-
-// Coordinator Layout with nested routes
-const CoordinatorLayout = () => {
-  return (
-    <CoordinatorDashboard>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-    </CoordinatorDashboard>
-  );
-};
-
-// Supervisor Layout with nested routes
-const SupervisorLayout = () => {
-  return (
-    <SupervisorDashboard>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-      </Routes>
-    </SupervisorDashboard>
-  );
-};
-
-const DashboardRouter = () => {
-  const { user } = useAuth();
-
-  switch (user?.role) {
-    case 'admin':
-      return <AdminLayout />;
-    case 'instructor':
-      return <InstructorLayout />;
-    case 'trainee':
-      return <TraineeLayout />;
-    case 'coordinator':
-      return <CoordinatorLayout />;
-    case 'supervisor':
-      return <SupervisorLayout />;
-    default:
-      return <Dashboard />;
-  }
-};
-
 function App() {
   return (
     <AuthProvider>
@@ -129,102 +55,143 @@ function App() {
         <KeyboardNavigationWrapper />
         <Routes>
           <Route path="/login" element={<Login />} />
+          
+          {/* Admin Routes */}
           <Route path="/dashboard" element={
-            <PrivateRoute>
-              <DashboardRouter />
+            <PrivateRoute allowedRoles={['admin']}>
+              <AdminDashboard title="Dashboard">
+                <Dashboard />
+              </AdminDashboard>
             </PrivateRoute>
           } />
           <Route path="/admin/users" element={
             <PrivateRoute allowedRoles={['admin']}>
-              <AdminDashboard>
+              <AdminDashboard title="Gestion des Utilisateurs">
                 <Users />
               </AdminDashboard>
             </PrivateRoute>
           } />
           <Route path="/admin/subjects" element={
             <PrivateRoute allowedRoles={['admin']}>
-              <AdminDashboard>
+              <AdminDashboard title="Gestion des Matières">
                 <Subjects />
               </AdminDashboard>
             </PrivateRoute>
           } />
+          
+          {/* Instructor Routes */}
+          <Route path="/dashboard" element={
+            <PrivateRoute allowedRoles={['instructor']}>
+              <InstructorDashboard title="Dashboard">
+                <Dashboard />
+              </InstructorDashboard>
+            </PrivateRoute>
+          } />
           <Route path="/instructor/courses" element={
             <PrivateRoute allowedRoles={['instructor', 'admin']}>
-              <InstructorDashboard>
+              <InstructorDashboard title="Gestion des Cours">
                 <Courses />
               </InstructorDashboard>
             </PrivateRoute>
           } />
           <Route path="/instructor/controls" element={
             <PrivateRoute allowedRoles={['instructor', 'admin']}>
-              <InstructorDashboard>
+              <InstructorDashboard title="Gestion des Contrôles">
                 <Controls />
               </InstructorDashboard>
             </PrivateRoute>
           } />
           <Route path="/instructor/corrections" element={
             <PrivateRoute allowedRoles={['instructor', 'admin']}>
-              <InstructorDashboard>
+              <InstructorDashboard title="Gestion des Corrections">
                 <Corrections />
               </InstructorDashboard>
             </PrivateRoute>
           } />
           <Route path="/instructor/research" element={
             <PrivateRoute allowedRoles={['instructor', 'admin']}>
-              <InstructorDashboard>
+              <InstructorDashboard title="Sujets de Recherche">
                 <ResearchTopics />
               </InstructorDashboard>
             </PrivateRoute>
           } />
+          
+          {/* Trainee Routes */}
+          <Route path="/dashboard" element={
+            <PrivateRoute allowedRoles={['trainee']}>
+              <TraineeDashboard title="Dashboard">
+                <Dashboard />
+              </TraineeDashboard>
+            </PrivateRoute>
+          } />
           <Route path="/trainee/courses" element={
             <PrivateRoute allowedRoles={['trainee']}>
-              <TraineeDashboard>
+              <TraineeDashboard title="Mes Cours">
                 <MyCourses />
               </TraineeDashboard>
             </PrivateRoute>
           } />
           <Route path="/trainee/controls" element={
             <PrivateRoute allowedRoles={['trainee']}>
-              <TraineeDashboard>
+              <TraineeDashboard title="Mes Contrôles">
                 <MyControls />
               </TraineeDashboard>
             </PrivateRoute>
           } />
           <Route path="/trainee/corrections" element={
             <PrivateRoute allowedRoles={['trainee']}>
-              <TraineeDashboard>
+              <TraineeDashboard title="Mes Corrections">
                 <MyCorrections />
               </TraineeDashboard>
             </PrivateRoute>
           } />
           <Route path="/trainee/research" element={
             <PrivateRoute allowedRoles={['trainee']}>
-              <TraineeDashboard>
+              <TraineeDashboard title="Ma Recherche">
                 <MyResearch />
               </TraineeDashboard>
             </PrivateRoute>
           } />
+          
+          {/* Coordinator Routes */}
+          <Route path="/dashboard" element={
+            <PrivateRoute allowedRoles={['coordinator']}>
+              <CoordinatorDashboard title="Dashboard">
+                <Dashboard />
+              </CoordinatorDashboard>
+            </PrivateRoute>
+          } />
           <Route path="/coordinator/progress" element={
             <PrivateRoute allowedRoles={['coordinator', 'supervisor', 'admin']}>
-              <CoordinatorDashboard>
+              <CoordinatorDashboard title="Progression des Stagiaires">
                 <TraineeProgress />
               </CoordinatorDashboard>
             </PrivateRoute>
           } />
+          
+          {/* Supervisor Routes */}
+          <Route path="/dashboard" element={
+            <PrivateRoute allowedRoles={['supervisor']}>
+              <SupervisorDashboard title="Dashboard">
+                <Dashboard />
+              </SupervisorDashboard>
+            </PrivateRoute>
+          } />
           <Route path="/supervisor/progress" element={
             <PrivateRoute allowedRoles={['supervisor', 'admin']}>
-              <SupervisorDashboard>
+              <SupervisorDashboard title="Progression Détaillée">
                 <DetailedProgress />
               </SupervisorDashboard>
             </PrivateRoute>
           } />
           <Route path="/supervisor/submissions" element={
             <PrivateRoute allowedRoles={['supervisor', 'admin']}>
-              <SupervisorDashboard>
+              <SupervisorDashboard title="Soumissions">
                 <SupervisorSubmissions />
               </SupervisorDashboard>
             </PrivateRoute>
           } />
+          
           <Route path="/" element={<Navigate to="/dashboard" />} />
           <Route path="*" element={<Navigate to="/dashboard" />} />
         </Routes>
