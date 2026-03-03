@@ -8,6 +8,9 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterRole, setFilterRole] = useState('all');
+  const [activeTab, setActiveTab] = useState('all');
   const [formData, setFormData] = useState({
     email: '', username: '', first_name: '', last_name: '', role: 'trainee', password: '', password_confirm: '', phone: '', address: ''
   });
@@ -65,6 +68,38 @@ const Users = () => {
     return badges[role] || 'badge-secondary';
   };
 
+  // Filter users based on search and role
+  const filteredUsers = users.filter(user => {
+    const matchesSearch = searchTerm === '' || 
+      user.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesRole = filterRole === 'all' || user.role === filterRole;
+    
+    return matchesSearch && matchesRole;
+  });
+
+  // Group users by role for tabs
+  const instructors = users.filter(u => u.role === 'instructor');
+  const trainees = users.filter(u => u.role === 'trainee');
+  const coordinators = users.filter(u => u.role === 'coordinator');
+  const supervisors = users.filter(u => u.role === 'supervisor');
+  const admins = users.filter(u => u.role === 'admin');
+
+  const getTabUsers = () => {
+    switch (activeTab) {
+      case 'instructors': return instructors;
+      case 'trainees': return trainees;
+      case 'coordinators': return coordinators;
+      case 'supervisors': return supervisors;
+      case 'admins': return admins;
+      default: return filteredUsers;
+    }
+  };
+
+  const displayUsers = activeTab === 'all' ? filteredUsers : getTabUsers();
+
   return (
     <div>
       <div className="page-header">
@@ -74,11 +109,86 @@ const Users = () => {
         <h1 className="page-title">Gestion des Utilisateurs</h1>
         <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Ajouter un utilisateur</button>
       </div>
+      
+      {/* Search and Filter Bar */}
+      <div className="filters" style={{ marginBottom: '20px', display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+        <div className="filter-group" style={{ flex: 1, minWidth: '200px' }}>
+          <input 
+            type="text" 
+            className="form-input" 
+            placeholder="Rechercher par nom ou email..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="filter-group">
+          <select className="form-select" value={filterRole} onChange={(e) => setFilterRole(e.target.value)}>
+            <option value="all">Tous les rôles</option>
+            <option value="admin">Administrateur</option>
+            <option value="instructor">Instructeur</option>
+            <option value="coordinator">Coordinateur</option>
+            <option value="supervisor">Superviseur</option>
+            <option value="trainee">Stagiaire</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Role Tabs */}
+      <div className="tabs" style={{ marginBottom: '20px', borderBottom: '2px solid #e5e7eb' }}>
+        <button 
+          className={`tab ${activeTab === 'all' ? 'active' : ''}`}
+          onClick={() => setActiveTab('all')}
+          style={{ padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer', borderBottom: activeTab === 'all' ? '2px solid #A435F0' : '2px solid transparent', marginBottom: '-2px' }}
+        >
+          Tous ({users.length})
+        </button>
+        <button 
+          className={`tab ${activeTab === 'instructors' ? 'active' : ''}`}
+          onClick={() => setActiveTab('instructors')}
+          style={{ padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer', borderBottom: activeTab === 'instructors' ? '2px solid #A435F0' : '2px solid transparent', marginBottom: '-2px' }}
+        >
+          Instructeurs ({instructors.length})
+        </button>
+        <button 
+          className={`tab ${activeTab === 'trainees' ? 'active' : ''}`}
+          onClick={() => setActiveTab('trainees')}
+          style={{ padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer', borderBottom: activeTab === 'trainees' ? '2px solid #A435F0' : '2px solid transparent', marginBottom: '-2px' }}
+        >
+          Stagiaires ({trainees.length})
+        </button>
+        <button 
+          className={`tab ${activeTab === 'coordinators' ? 'active' : ''}`}
+          onClick={() => setActiveTab('coordinators')}
+          style={{ padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer', borderBottom: activeTab === 'coordinators' ? '2px solid #A435F0' : '2px solid transparent', marginBottom: '-2px' }}
+        >
+          Coordinateurs ({coordinators.length})
+        </button>
+        <button 
+          className={`tab ${activeTab === 'supervisors' ? 'active' : ''}`}
+          onClick={() => setActiveTab('supervisors')}
+          style={{ padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer', borderBottom: activeTab === 'supervisors' ? '2px solid #A435F0' : '2px solid transparent', marginBottom: '-2px' }}
+        >
+          Superviseurs ({supervisors.length})
+        </button>
+        <button 
+          className={`tab ${activeTab === 'admins' ? 'active' : ''}`}
+          onClick={() => setActiveTab('admins')}
+          style={{ padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer', borderBottom: activeTab === 'admins' ? '2px solid #A435F0' : '2px solid transparent', marginBottom: '-2px' }}
+        >
+          Administrateurs ({admins.length})
+        </button>
+      </div>
+
       <div className="page-content">
         <div className="card">
           <div className="card-body">
             {loading ? (
               <p>Chargement...</p>
+            ) : displayUsers.length === 0 ? (
+              <div className="empty-state">
+                <h3>Aucun utilisateur trouvé</h3>
+                <p>Essayez de modifier vos critères de recherche</p>
+              </div>
             ) : (
               <table className="table">
                 <thead>
@@ -91,7 +201,7 @@ const Users = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {users.map((user) => (
+                  {displayUsers.map((user) => (
                     <tr key={user.id}>
                       <td>{user.first_name} {user.last_name}</td>
                       <td>{user.email}</td>

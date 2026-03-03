@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const InstructorDashboard = () => {
+const InstructorDashboard = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -25,6 +25,7 @@ const InstructorDashboard = () => {
         <div className="sidebar-header">
           <div className="sidebar-logo">PFE <span>Formation</span></div>
         </div>
+        
         <nav className="sidebar-nav">
           <div className="nav-section">
             <div className="nav-section-title">Menu Principal</div>
@@ -38,6 +39,7 @@ const InstructorDashboard = () => {
             ))}
           </div>
         </nav>
+        
         <div className="sidebar-footer">
           <div className="user-info">
             <div className="user-avatar">{user?.first_name?.[0]}{user?.last_name?.[0]}</div>
@@ -54,7 +56,7 @@ const InstructorDashboard = () => {
         </div>
       </aside>
       <main className="main-content">
-        <Outlet />
+        {children}
       </main>
     </div>
   );

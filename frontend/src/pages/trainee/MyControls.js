@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const MyControls = () => {
+  const navigate = useNavigate();
   const [controls, setControls] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -57,6 +59,9 @@ const MyControls = () => {
   return (
     <div>
       <div className="page-header">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)} style={{ marginRight: '15px' }}>
+          ← Retour
+        </button>
         <h1 className="page-title">Mes Contrôles</h1>
       </div>
       <div className="page-content">

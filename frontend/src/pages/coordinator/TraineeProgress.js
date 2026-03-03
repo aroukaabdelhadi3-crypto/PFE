@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const TraineeProgress = () => {
+  const navigate = useNavigate();
   const [progress, setProgress] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,12 +35,15 @@ const TraineeProgress = () => {
   return (
     <div>
       <div className="page-header">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)} style={{ marginRight: '15px' }}>
+          ← Retour
+        </button>
         <h1 className="page-title">Suivi des Stagiaires</h1>
       </div>
       <div className="page-content">
         {loading ? <p>Chargement...</p> : progress.length === 0 ? (
           <div className="empty-state">
-            <h3>Aucun stagiaire trouvé</h3>
+            <h3>Aucun stagière trouvé</h3>
             <p>Aucune progression enregistrée</p>
           </div>
         ) : (

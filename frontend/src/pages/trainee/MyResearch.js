@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const MyResearch = () => {
+  const navigate = useNavigate();
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -55,6 +57,9 @@ const MyResearch = () => {
   return (
     <div>
       <div className="page-header">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)} style={{ marginRight: '15px' }}>
+          ← Retour
+        </button>
         <h1 className="page-title">Sujets de Recherche</h1>
       </div>
       <div className="page-content">

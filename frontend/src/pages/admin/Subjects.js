@@ -9,6 +9,7 @@ const Subjects = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingSubject, setEditingSubject] = useState(null);
   const [instructors, setInstructors] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [formData, setFormData] = useState({ name: '', description: '', instructor: '' });
 
   useEffect(() => {
@@ -64,6 +65,14 @@ const Subjects = () => {
     }
   };
 
+  // Filter subjects based on search
+  const filteredSubjects = subjects.filter(subject => {
+    return searchTerm === '' || 
+      subject.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      subject.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      subject.instructor_name?.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   return (
     <div>
       <div className="page-header">
@@ -73,15 +82,29 @@ const Subjects = () => {
         <h1 className="page-title">Gestion des Matières</h1>
         <button className="btn btn-primary" onClick={() => setShowModal(true)}>+ Ajouter une matière</button>
       </div>
+      
+      {/* Search Bar */}
+      <div className="filters" style={{ marginBottom: '20px' }}>
+        <div className="filter-group" style={{ width: '100%' }}>
+          <input 
+            type="text" 
+            className="form-input" 
+            placeholder="Rechercher par nom, description ou instructeur..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+      </div>
+
       <div className="page-content">
         <div className="card">
           <div className="card-body">
             {loading ? (
               <p>Chargement...</p>
-            ) : subjects.length === 0 ? (
+            ) : filteredSubjects.length === 0 ? (
               <div className="empty-state">
                 <h3>Aucune matière trouvée</h3>
-                <p>Commencez par ajouter une matière</p>
+                <p>{searchTerm ? 'Essayez de modifier vos critères de recherche' : 'Commencez par ajouter une matière'}</p>
               </div>
             ) : (
               <table className="table">
@@ -93,7 +116,7 @@ const Subjects = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {subjects.map((subject) => (
+                  {filteredSubjects.map((subject) => (
                     <tr key={subject.id}>
                       <td>{subject.name}</td>
                       <td>{subject.instructor_name || 'Non assigné'}</td>

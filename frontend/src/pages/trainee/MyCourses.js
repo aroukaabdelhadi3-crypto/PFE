@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const MyCourses = () => {
+  const navigate = useNavigate();
   const [courses, setCourses] = useState({ 1: [], 2: [], 3: [], 4: [] });
   const [loading, setLoading] = useState(true);
 
@@ -31,6 +33,9 @@ const MyCourses = () => {
   return (
     <div>
       <div className="page-header">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)} style={{ marginRight: '15px' }}>
+          ← Retour
+        </button>
         <h1 className="page-title">Mes Cours</h1>
       </div>
       <div className="page-content">

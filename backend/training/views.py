@@ -100,7 +100,7 @@ class ControlViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
             return [permissions.IsAuthenticated()]
-        return [permissions.IsAdminUser() | permissions.IsInstructor()]
+        return [permissions.IsAdminUser()]
     
     def get_queryset(self):
         queryset = Control.objects.all()

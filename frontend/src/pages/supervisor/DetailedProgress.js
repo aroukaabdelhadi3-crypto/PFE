@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const DetailedProgress = () => {
+  const navigate = useNavigate();
   const [progress, setProgress] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,13 +35,16 @@ const DetailedProgress = () => {
   return (
     <div>
       <div className="page-header">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)} style={{ marginRight: '15px' }}>
+          ← Retour
+        </button>
         <h1 className="page-title">Suivi Détaillé des Stagiaires</h1>
       </div>
       <div className="page-content">
         {loading ? <p>Chargement...</p> : progress.length === 0 ? (
           <div className="empty-state">
-            <h3>Aucun данные о trainees found</h3>
-            <p>No progress recorded yet</p>
+            <h3>Aucun stagière trouvé</h3>
+            <p>Aucune progression enregistrée pour le moment</p>
           </div>
         ) : (
           <div className="stats-grid">
@@ -78,7 +83,7 @@ const DetailedProgress = () => {
                   <div className="progress-bar-large">
                     <div className="progress-fill-large" style={{ width: `${getProgressPercent(p)}%` }}></div>
                   </div>
-                  <div className="progress-percent">{Math.round(getProgressPercent(p))}% Completed</div>
+                  <div className="progress-percent">{Math.round(getProgressPercent(p))}% Terminé</div>
                 </div>
               </div>
             ))}

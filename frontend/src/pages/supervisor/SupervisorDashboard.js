@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const SupervisorDashboard = () => {
+const SupervisorDashboard = ({ children }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-    { path: '/supervisor/progress', label: 'Suivi Détaillé', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
-    { path: '/supervisor/submissions', label: 'Soumissions', icon: 'M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12' },
+    { path: '/supervisor/progress', label: 'Progression Détaillée', icon: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z' },
+    { path: '/supervisor/submissions', label: 'Soumissions', icon: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8' },
   ];
 
   const getRoleLabel = (role) => {
@@ -23,6 +23,7 @@ const SupervisorDashboard = () => {
         <div className="sidebar-header">
           <div className="sidebar-logo">PFE <span>Formation</span></div>
         </div>
+        
         <nav className="sidebar-nav">
           <div className="nav-section">
             <div className="nav-section-title">Menu Principal</div>
@@ -36,6 +37,7 @@ const SupervisorDashboard = () => {
             ))}
           </div>
         </nav>
+        
         <div className="sidebar-footer">
           <div className="user-info">
             <div className="user-avatar">{user?.first_name?.[0]}{user?.last_name?.[0]}</div>
@@ -52,7 +54,7 @@ const SupervisorDashboard = () => {
         </div>
       </aside>
       <main className="main-content">
-        <Outlet />
+        {children}
       </main>
     </div>
   );

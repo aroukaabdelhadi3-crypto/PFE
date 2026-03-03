@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.utils import timezone
+from datetime import datetime
 from .models import (
     Subject, Course, Control, TraineeSubmission, 
     Correction, ResearchTopic, ResearchSubmission, TrainingProgress
@@ -53,10 +54,27 @@ class ControlSerializer(serializers.ModelSerializer):
         return False
     
     def to_internal_value(self, data):
-        # Handle empty strings for optional fields
-        for field_name in ['due_date']:
-            if field_name in data and data[field_name] == '':
-                data[field_name] = None
+        # Handle due_date - convert string date to datetime
+        if 'due_date' in data and data['due_date']:
+            date_str = data['due_date']
+            if isinstance(date_str, str) and date_str not in ['', 'null', 'None']:
+                try:
+                    # Try to parse the date string
+                    data = data.copy()
+                    # Handle both date and datetime formats
+                    if 'T' in date_str:
+                        data['due_date'] = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                    else:
+                        # Append time to make it a full datetime
+                        data['due_date'] = datetime.strptime(date_str, '%Y-%m-%d')
+                except (ValueError, TypeError):
+                    data['due_date'] = None
+            else:
+                data = data.copy()
+                data['due_date'] = None
+        elif 'due_date' in data:
+            data = data.copy()
+            data['due_date'] = None
         return super().to_internal_value(data)
 
 
@@ -127,10 +145,24 @@ class ResearchTopicSerializer(serializers.ModelSerializer):
         return False
     
     def to_internal_value(self, data):
-        # Handle empty strings for optional fields
-        for field_name in ['due_date']:
-            if field_name in data and data[field_name] == '':
-                data[field_name] = None
+        # Handle due_date - convert string date to datetime
+        if 'due_date' in data and data['due_date']:
+            date_str = data['due_date']
+            if isinstance(date_str, str) and date_str not in ['', 'null', 'None']:
+                try:
+                    data = data.copy()
+                    if 'T' in date_str:
+                        data['due_date'] = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+                    else:
+                        data['due_date'] = datetime.strptime(date_str, '%Y-%m-%d')
+                except (ValueError, TypeError):
+                    data['due_date'] = None
+            else:
+                data = data.copy()
+                data['due_date'] = None
+        elif 'due_date' in data:
+            data = data.copy()
+            data['due_date'] = None
         return super().to_internal_value(data)
 
 

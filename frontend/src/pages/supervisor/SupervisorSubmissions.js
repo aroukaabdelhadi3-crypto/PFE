@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const SupervisorSubmissions = () => {
+  const navigate = useNavigate();
   const [submissions, setSubmissions] = useState([]);
   const [researchSubmissions, setResearchSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +44,9 @@ const SupervisorSubmissions = () => {
   return (
     <div>
       <div className="page-header">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)} style={{ marginRight: '15px' }}>
+          ← Retour
+        </button>
         <h1 className="page-title">Soumissions des Stagiaires</h1>
       </div>
       <div className="page-content">
